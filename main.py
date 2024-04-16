@@ -9,6 +9,7 @@ from langchain.chains.conversational_retrieval.base import ConversationalRetriev
 import os
 from pydantic import BaseModel
 from langchain_community.vectorstores import FAISS
+import uvicorn
 
 
 app = FastAPI()
@@ -67,3 +68,6 @@ async def ask_question(query: UserQuery):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
