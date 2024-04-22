@@ -21,7 +21,7 @@ class UserQuery(BaseModel):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], #"https://your-frontend-app.herokuapp.com"],
+    allow_origins=["https://schoolsoft-support-bot-fe9057e7d85a.herokuapp.com", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
