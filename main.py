@@ -10,6 +10,8 @@ import os
 from pydantic import BaseModel
 from langchain_community.vectorstores import FAISS
 import uvicorn
+from langchain.prompts.chat import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
+
 
 
 app = FastAPI()
@@ -37,11 +39,27 @@ embeddings = OpenAIEmbeddings()
 vectorstore = FAISS.load_local(index_path, embeddings, allow_dangerous_deserialization=True)
 
 
+general_system_template = r""" 
+Describe everything in detail.
+ ----
+{context}
+----
+"""
+
+general_user_template = "Question:```{question}```"
+messages = [
+            SystemMessagePromptTemplate.from_template(general_system_template),
+            HumanMessagePromptTemplate.from_template(general_user_template)
+]
+qa_prompt = ChatPromptTemplate.from_messages(messages)
+
+
 def get_conversation_chain():
     llm = ChatOpenAI()
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=vectorstore.as_retriever(),
+        combine_docs_chain_kwargs={'prompt': qa_prompt}
     )
     return conversation_chain
 
